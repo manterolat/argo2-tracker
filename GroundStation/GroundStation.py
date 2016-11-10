@@ -463,7 +463,7 @@ def connect_serial(*args):
     if serial_port.get():
         write_log(logging.INFO, "Connecting to serial port " + serial_port.get() + "...")
         try: 
-            ser = serial.Serial(serial_port.get(), timeout=None)
+            ser = serial.Serial(serial_port.get(), timeout=None, write_timeout=5)
             write_log(logging.INFO, "Connected!")
             return
         except:
