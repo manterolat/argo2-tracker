@@ -65,11 +65,12 @@ To download the files in this repository run:
 ### Ground Station:
 Runs on Python 2.7. Requires following modules:
  * *crcmod* for CRC checking
+ * *pyqrcode* for generating QR codes
  * *pyserial* for serial communication
 
 To install these (using *pip*) run:
 
-`pip install crcmod pyserial`
+`pip install crcmod pyqrcode pyserial`
 
 
 

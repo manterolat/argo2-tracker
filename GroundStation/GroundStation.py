@@ -7,6 +7,7 @@ Receives data from RFM96W receiver (connected to Arduino/Microcontroller), displ
 
 Dependencies:
  - crcmod
+ - pyqrcode
  - pyserial
 
 '''
@@ -29,6 +30,7 @@ from ScrolledText import ScrolledText
 # Install missing packages if necessary
 try:
     import crcmod.predefined
+    import pyqrcode
     import serial
 
 except ImportError:
@@ -42,6 +44,7 @@ except ImportError:
     
     print("Installing necessary packages...")
     pip.main(['install', 'crcmod'])
+    pip.main(['install', 'pyqrcode'])
     pip.main(['install', 'pyserial'])
     raw_input("Press any key to exit...")
     quit()
@@ -63,12 +66,12 @@ ABOUT_MESSAGE               = ["About", "Argo 2 Ground Station\n\nTool for commu
 
 
 GENERAL_COMMANDS            = [
-                                ["Set Transmit Power",  "0,POWER",  "Set tracker's transmit power to [POWER].\nValue can range from 5 to 23 dBm.\nWARNING: Low TX power could result in signal from tracker being too weak to receive."],
+                                ["Set Transmit Power",  "0,POWER",  "Set tracker's transmit power to [POWER].\nValue can range from 5 to 23 dBm.\nWARNING: Low TX power could result in signal being too weak to receive."],
                                 ["Set GPS Nav Mode",    "1,MODE",   "Set Navigation Mode of tracker's GPS to [MODE].\nValue can be either 0 (Pedestrian) or 1 (Airborne < 1G).\nWarning: GPS must be in Airborne mode at altitudes above 9 km to work."],
                                 ["Set GPS Power Mode",  "2,MODE",   "Set Power Mode of tracker's GPS to [MODE].\nValue can be either 0 (Max Performance) or 1 (Power Saving)."],
                                 ["Enable Buzzer",       "3,1",      "Enable buzzer to produce sound."],
                                 ["Disable Buzzer",      "3,0",      "Disable buzzer to stop producing sound.\nWill only work if buzzer has been previously enabled."],
-                                ["Set Tracker State",   "4,STATE",  "Set tracker's state to [STATE], which controls settings such as TX Power, Buzzer and GPS Mode.\nValues can be:\n\t0 - Standby (below 500 m)\n\t1 - Rising (above 500 m and rising)\n\t2 - Falling (High) (above 9,000 m and falling)\n\t3 - Falling (Low) (below 9,000 m and falling)\n\t4 - Landing (below 2,000 and falling)"],
+                                ["Set Tracker State",   "4,STATE",  "Set tracker's state to [STATE], which controls various settings.\nValues can be:\n\t0 - Standby (below 500 m)\n\t1 - Rising (above 500 m and rising)\n\t2 - Falling (High) (above 9,000 m and falling)\n\t3 - Falling (Low) (below 9,000 m and falling)\n\t4 - Landing (below 2,000 and falling)"],
                                #["Set Frequency",       "5,FREQ",   "Set tracker's transmit and receive frequency to [FREQ].\nValue can range from 410.000 to 525.000 MHz.\nWARNING: Receiver's frequency must match tracker's frequency in order to receive messages."],
                                 ["Custom Message",      "ID,VALUE", "Send custom message to capsule.\nWARNING: Certain messages could have unwanted effects on the tracker."]
 ]
@@ -96,6 +99,7 @@ global command_listbox
 global connect_button
 global crc_label
 global data_textbox
+global qrcode_label
 
 ser = serial.Serial()
 serial_port_wait = 1000
@@ -255,6 +259,7 @@ class MainApplication(tk.Frame):
         global command_listbox
         global connect_button
         global data_textbox
+        global qrcode_label
         
         # Create main Frame
         tk.Frame.__init__(self, parent)
@@ -375,7 +380,7 @@ class MainApplication(tk.Frame):
         # Command Description
         command_desc = tk.StringVar()
         command_desc_label = tk.Label(self.master, textvariable=command_desc, justify=tk.LEFT)
-        command_desc_label.grid(row=2, column=2, columnspan=5, padx=(20, 0), sticky='nw')
+        command_desc_label.grid(row=2, column=2, columnspan=4, rowspan=2, padx=(20, 0), sticky='nw')
         
         
         # Command TX Power
@@ -401,11 +406,30 @@ class MainApplication(tk.Frame):
         status_button = tk.Button(self.master, text="Show Status Window", command=show_status_window)
         status_button.grid(row=4, column=6, sticky='se')
         
+
+        # QR Code Label
+        tk.Label(self.master, text="Google Maps:").grid(row=2, column=6, sticky='se', pady=(0,0))
+        qrcode = pyqrcode.create('No data yet...')
         
+        # Create XBM image
+        qr_xbm = qrcode.xbm(scale=2)
+
+        # Create Tkinter Bitmap
+        qr_bmp = tk.BitmapImage(data=qr_xbm)
+
+        # Create label with image
+        qrcode_label = tk.Label(self.master, image=qr_bmp)
+
+        # Save reference to change image later
+        qrcode_label.image = qr_bmp
+
+        qrcode_label.grid(row=3, column=6, sticky='e')
+
+
         # Setup serial check in 100 ms (to repeat forever)
         self.after(100, get_serial_data)
-        
-        
+            
+
     # Show information about author and program
     def show_about(self):
         tkMessageBox.showinfo(title=ABOUT_MESSAGE[0], message=ABOUT_MESSAGE[1])
@@ -682,6 +706,26 @@ def send_data(*args):
             online = False
                 
                 
+# Updates qrcode_label with new QR Code link. Runs when me get a new message
+def update_qrcode(*args):
+    global app
+    global qrcode_label
+    global parsed_data
+
+    #qrcode = pyqrcode.create('http://google.com/maps/place/' + parsed_data[3][1].get() + "," + parsed_data[4][1].get())
+    qrcode = pyqrcode.create('geo:' + parsed_data[3][1].get() + "," + parsed_data[4][1].get())
+
+    # Create XBM image
+    qr_xbm = qrcode.xbm(scale=2)
+
+    # Create Tkinter Bitmap
+    qr_bmp = tk.BitmapImage(data=qr_xbm)
+
+    # Update image
+    qrcode_label.image = qr_bmp
+    qrcode_label.config(image=qr_bmp)
+
+
 # Toggle whether data is send to HabHub or not (and change button text/color)
 def toggle_online(*args):
     global app
@@ -797,7 +841,7 @@ def main():
     
     # List containing parsed data from the capsule/receiver in form (name, value, unit)
     # These are saved as 'StringVar' so that widgets update automatically when these are changed
-    # Example: ARGO2,10000,22:22:22,-92.1232322,-90.2322323,30000,-12.0,12.0,32.4,-20.25,-10.1,300.0,56.4,4.32,10,5,1*b762
+    # Example: ARGO2,10000,22:22:22,-92.1232322,-90.2322323,30000,-12.0,12.0,32.4,-20.25,-10.1,300.0,56.4,4.32,10,5,1*b762;-67
     parsed_data = [
                    ["callsign", tk.StringVar(), ""],        # 0.  Name of Capsule
                    ["sent_id", tk.StringVar(), ""],         # 1.  Sentence ID (number)    
@@ -836,11 +880,12 @@ def main():
     
     
     # Setup bindings/protocols/callbacks
-    root.protocol("WM_DELETE_WINDOW", on_exit)  # Run 'on_exit()' when user clicks "Close" button
-    online.trace("w", toggle_online)            # Run 'toggle_online()' when value of 'online' changes
-    parsed_data[17][1].trace('w', check_crc)
-    
-    
+    root.protocol("WM_DELETE_WINDOW", on_exit)      # Run 'on_exit()' when user clicks "Close" button
+    online.trace("w", toggle_online)                # Run 'toggle_online()' when value of 'online' changes
+    parsed_data[17][1].trace('w', check_crc)        # Run 'check_crc()' when we get a new message
+    parsed_data[17][1].trace('w', update_qrcode)    # Run 'udpate_qrcode()' when we get a new message
+
+
     # Start main update/window loop
     root.mainloop()
     
