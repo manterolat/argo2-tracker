@@ -50,7 +50,7 @@ except ImportError:
     quit()
 
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 SERIAL_PORT_SELECT_ERROR    = ["Serial Port Select Error", "Please select valid serial port from the list."]
 SERIAL_PORT_START_ERROR     = ["Serial Port Start Error", "Couldn't open serial port. Make sure the device is connected and that the selected serial port is the correct one."]
