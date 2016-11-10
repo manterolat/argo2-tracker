@@ -63,7 +63,7 @@ To download the files in this repository run:
  * [RadioHead](https://github.com/PaulStoffregen/RadioHead)
 
 ### Ground Station:
-Runs on Python 2.7. Requires following modules:
+GroundStation runs on Python 2.7, and requires the following modules:
  * *crcmod* for CRC checking
  * *pyqrcode* for generating QR codes
  * *pyserial* for serial communication
