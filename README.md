@@ -8,7 +8,7 @@ The GroundStation program shows any data received, along with signal strength an
 
 Included are the PCB schematics (made in Eagle CAD) and software of the tracker and receiver, as well as the Ground Station program which runs on the tracking computer.
 
-The software for the tracker and receiver is written in Arduino / C++, with the Ground Station written in Python.
+The software for the tracker and receiver is written in Arduino / C++, while the Ground Station written in Python.
 
 
 ## Table of Contents
@@ -80,16 +80,21 @@ To install these (using *pip*) run:
 After setting up the software and libary requirements you should be able to upload the tracker and receiver programs, as well as run the Ground Station.
 
 ### Tracker:
-Open `Argo2_Tracker_Feather.ino` or `Argo2_Tracker_Teensy`, depending on your microcontroller, with the Arduino IDE.
+Open `/src/Argo2_Tracker/Argo2_Tracker.ino` in the Arduino IDE.
 
-Before compiling and uploading to the Feather/Teensy make sure that the CALLSIGN, DEBUG definitions and other settings (such as TX power, frequency, etc.) in the program are set as planned.
-
-Make sure the following lines are correct in the program: 
+Before compiling and uploading to the Feather/Teensy make sure to configure the tracker by changing the following lines in the program: 
 ```C++
+// Tracker callsign: change to your tracker's callsign
 #define CALLSIGN "CHANGE_ME"
 
-// Enable/Disable debug messages
-#define DEBUG
+// Debug messages: uncomment the following line to enable printing to serial (for testing purposes)
+//#define DEBUG
+
+...
+
+// Select either Teensy 3.x or Feather M0
+#define TEENSY
+//#define FEATHER
 ```
 
 Leaving `#define DEBUG` uncommented will compile the Serial messages, which takes up space and cycles in the microcontroller.
@@ -121,7 +126,7 @@ The program will keep a log in the form of files: `GroundStation.log` and `sente
 Things to keep in mind before launch:
  * *Cut the thermocouple cable as short as possible* while keeping a small piece outside. We found that this reduced interference and/or resistance in the cable and improved the accuracy of measurements.
  * For the BME280 (pressure and humidity sensor) it's best to use cables and *place the module on the outside of the capsule*.
- * If placing the BME280 outside, *cover the sensor with a small piece of cotton/fabric using tape* in order to block wind which could affect measurements. 
+ * If placing the BME280 outside, *cover the sensor with a small piece of cotton/fabric using tape* in order to block wind which could affect measurements.
 
 Only the *Adafruit Feather M0* configuration (without thermocouple sensor) has being tested so far. Since then there have been a few changes to the tracker and receiver programs (mostly changing Serial.println to Snprintln).
 
