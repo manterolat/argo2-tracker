@@ -22,11 +22,14 @@
 
 /*** Tracker Configuration ***/
 
-// Tracker callsign: change to your tracker's callsign
-#define CALLSIGN "CHANGE_ME"
+// Tracker callsign: change to your tracker's callsign and uncomment
+//#define CALLSIGN "CHANGE_ME"
+#ifndef CALLSIGN
+    #error Callsign must be set before use!
+#endif
 
-// Debug messages: uncomment the following line to enable printing to serial (for testing purposes)
-//#define DEBUG
+// Debug messages: comment the following line to disable printing to serial (for testing purposes)
+#define DEBUG
 
 // Source: http://arduino.stackexchange.com/questions/9857/can-i-make-the-arduino-ignore-serial-print
 #ifdef DEBUG
@@ -38,12 +41,12 @@
 #endif
 
 // Select either Teensy 3.x or Feather M0
-#define TEENSY
-//#define FEATHER
+//#define TEENSY
+#define FEATHER
 
 // Enable MAX31855 thermocouple: can be disabled by commenting MAX31855 line
 #ifdef TEENSY
-    #define MAX31855
+    //#define MAX31855
 #endif
 
 
@@ -71,28 +74,42 @@
 #define BATT A7
 
 // Buzzer pin
-#define BUZZ 5
+#ifdef TEENSY
+    #define BUZZ 8
+#else
+    #define BUZZ 5
+#endif
 
-// SPI pins for Adafruit Feather
-// Used to connect to: BME280, MAX31855K Thermocouple, RFM96W Transceiver
-#define MISO 22
-#define MOSI 23
-#define SCK 24
-
-// Adafruit BME280 Sensor - uses I2C
-#define BME_CS A2
-Adafruit_BME280 bme;
+// Adafruit BME280 Sensor - Uses I2C
+// Note: if using I2C you must connect the SCL and SDA pins of the BME280 to the microcontroller externally
+#ifdef TEENSY
+    #define BME_CS A3
+    Adafruit_BME280 bme;
+#else
+    #define BME_CS A2
+    Adafruit_BME280 bme;
+#endif
 
 // Adafruit MAX31855K Thermocouple Amplifier - Uses SPI
-#define MAX_CS A3
+#ifdef TEENSY
+    #define MAX_CS A1
+#else
+    #define MAX_CS A3
+#endif
+
 #ifdef MAX31855
     Adafruit_MAX31855 thermocouple(MAX_CS);
 #endif
 
 // RFM96W Transceiver - uses propietary LoRa radio protocol and transmits between 410.000 and 525.000 MHz
 // Uses SPI - RFM96W Chip Select and Interrupt pins
-#define RFM_CS A1
-#define RFM_INT 18
+#ifdef TEENSY
+    #define RFM_CS A2
+    #define RFM_INT A0
+#else
+    #define RFM_CS A1
+    #define RFM_INT 18 // or A4
+#endif
 RH_RF95 rf95(RFM_CS, RFM_INT);
 
 // U-Blox NEO-M8N GPS - uses Serial1
@@ -167,8 +184,6 @@ const uint8_t GPS_POWER_PERFORMANCE[] = {
     0xB5, 0x62, 0x06, 0x11, 0x02, 0x00, 0x08, 0x00, 0x21, 0x91
 };
 
-const uint8_t spaceMsg[] = "";
-
 
 /*** Global Variables ***/
 
@@ -242,6 +257,7 @@ void setup() {
     // Configure LED, Buzzer and CS pin to OUTPUT
     pinMode(LED, OUTPUT);
     pinMode(BUZZ, OUTPUT);
+    pinMode(BME_CS, OUTPUT);
     pinMode(MAX_CS, OUTPUT);
     pinMode(RFM_CS, OUTPUT);
 
@@ -287,7 +303,6 @@ void setup() {
 
         // If it can't be initialized, stop the program and blink every 1s
         while (true) {
-            digitalWrite(LED, !digitalRead(LED));
             digitalWrite(BUZZ, !digitalRead(BUZZ));
             delay(1000);
         }

@@ -53,26 +53,20 @@
 #define BATT A7
 
 // Buzzer pin
-#define BUZZ 5
+#define BUZZ 8
 
-// SPI pins for Adafruit Feather
-// Used to connect to: BME280, MAX31855K Thermocouple, RFM96W Transceiver
-#define MISO 22
-#define MOSI 23
-#define SCK 24
-
-// Adafruit BME280 Sensor - uses I2C
-#define BME_CS A2
+// Adafruit BME280 Sensor - Uses I2C
+#define BME_CS A3
 Adafruit_BME280 bme;
 
 // Adafruit MAX31855K Thermocouple Amplifier - Uses SPI
-#define MAX_CS A3
-Adafruit_MAX31855 thermocouple(MAX_CS);
+#define MAX_CS A1
+//Adafruit_MAX31855 thermocouple(MAX_CS);
 
 // RFM96W Transceiver - uses propietary LoRa radio protocol and transmits between 410.000 and 525.000 MHz
 // Uses SPI - RFM96W Chip Select and Interrupt pins
-#define RFM_CS A1
-#define RFM_INT 18
+#define RFM_CS A2
+#define RFM_INT A0
 RH_RF95 rf95(RFM_CS, RFM_INT);
 
 // U-Blox NEO-M8N GPS - uses Serial1

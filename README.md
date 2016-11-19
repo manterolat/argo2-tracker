@@ -25,7 +25,7 @@ The software for the tracker and receiver is written in Arduino / C++, while the
 ### Tracker:
  * [Adafruit Feather M0](https://www.adafruit.com/product/269), or [Teensy 3.x](https://www.pjrc.com/store/teensy32.html) with [Feather adapter](https://www.adafruit.com/products/3200)
  * U-Blox NEO 6/7/8 Serial GPS module such as [this](https://www.amazon.com/Antenna-AeroQuad-Multirotor-Quadcopter-Aircraft/dp/B00RCP9MLY/)
- * [MAX31855 thermocouple amplifier](https://www.adafruit.com/products/269) (and [thermocouple](https://www.adafruit.com/products/270))
+ * ~~[MAX31855 thermocouple amplifier](https://www.adafruit.com/products/269) (and [thermocouple](https://www.adafruit.com/products/270))~~ Doesn't work
  * [BME280 module](https://www.adafruit.com/products/2652): Pressure, humidity and temperature sensor
  * RFM95W Transceiver
 
@@ -51,7 +51,7 @@ To download the files in this repository run:
 #### Arduino Libraries
  * [Adafruit Unified Sensor Driver](https://github.com/adafruit/Adafruit_Sensor)
  * [Adafruit BME280](https://github.com/adafruit/Adafruit_BME280_Library)
- * Only with *Teensy* setup: [Adafruit MAX31855](https://github.com/adafruit/Adafruit-MAX31855-library) (version 1.0.3 or higher for SPI Transactions)
+ * ~~Only with *Teensy* setup: [Adafruit MAX31855](https://github.com/adafruit/Adafruit-MAX31855-library) (version 1.0.3 or higher for SPI Transactions)~~ Doesn't work
  * [RadioHead](https://github.com/PaulStoffregen/RadioHead) (Paul Stoffregen's version with SPI Transactions)
  * [TinyGPS++](https://github.com/mikalhart/TinyGPSPlus)
 
@@ -130,6 +130,9 @@ Things to keep in mind before launch:
 
 Only the *Adafruit Feather M0* configuration (without thermocouple sensor) has being tested so far. Since then there have been a few changes to the tracker and receiver programs (mostly changing Serial.println to Snprintln).
 
+The tracker also can't use the BME280 through SPI at the same time as the RFM95W radio due to SPI Transaction issues with the RadioHead library.
+For this reason, **to use the BME280 you will need to connect the SCL and SDA pins of the BME280 to that of the Feather externally to use I2C instead** (soldering wires externally).
+
 
 <a name="pcbs"></a>
 
@@ -157,7 +160,7 @@ This board supports the use of a PCB to SMA adapter if needed.
 We launched the Argo 2 capsule on April 2016 using the Feather M0 setup without the thermocouple (due to SPI issues - fixed in Teensy version). We received data throughout most of flight, which reached over 30 km altitude, and used HabHub to follow the capsule.
 Unfortunately, the capsule landed in a mountainous area that made recovery impossible.
 
-A second launch is planned for late November 2016. This time the Teensy setup will be used with the thermocouple enabled.
+A second launch is planned for late November 2016.
 
 ---
 

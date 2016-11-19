@@ -58,7 +58,7 @@
 #define MOSI 23
 #define SCK 24
 
-// Adafruit BME280 Sensor - uses I2C
+// Adafruit BME280 Sensor - Uses I2C
 #define BME_CS A2
 Adafruit_BME280 bme;
 
