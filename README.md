@@ -52,8 +52,9 @@ To download the files in this repository run:
  * [Adafruit Unified Sensor Driver](https://github.com/adafruit/Adafruit_Sensor)
  * [Adafruit BME280](https://github.com/adafruit/Adafruit_BME280_Library)
  * ~~Only with *Teensy* setup: [Adafruit MAX31855](https://github.com/adafruit/Adafruit-MAX31855-library) (version 1.0.3 or higher for SPI Transactions)~~ Doesn't work
- * [RadioHead](https://github.com/PaulStoffregen/RadioHead) (Paul Stoffregen's version with SPI Transactions)
- * [TinyGPS++](https://github.com/mikalhart/TinyGPSPlus)
+ * If using *Teensy 3.x*: [RadioHead](https://github.com/PaulStoffregen/RadioHead) (Paul Stoffregen's version for Teensy)
+ * If using *Feather M0*: [RadioHead](http://www.airspayce.com/mikem/arduino/RadioHead/) (Regular, updated version) 
+ * ~~[TinyGPS++](https://github.com/mikalhart/TinyGPSPlus)~~ Broken for non-AVR chips: use [this](https://github.com/manterolat/argo2-tracker/files/601752/TinyGPSPlus.zip) modified version instead
 
 ### Receiver:
 #### Software
