@@ -132,7 +132,7 @@ Things to keep in mind before launch:
 Only the *Adafruit Feather M0* configuration (without thermocouple sensor) has being tested so far. Since then there have been a few changes to the tracker and receiver programs (mostly changing Serial.println to Snprintln).
 
 The tracker also can't use the BME280 through SPI at the same time as the RFM95W radio due to SPI Transaction issues with the RadioHead library.
-For this reason, **to use the BME280 you will need to connect the SCL and SDA pins of the BME280 to that of the Feather externally to use I2C instead** (soldering wires externally).
+For this reason, **to use the BME280 you will need to connect the SCL and SDA pins of the BME280 to those of the Feather externally to use I2C instead** (soldering wires externally).
 
 
 <a name="pcbs"></a>
@@ -158,11 +158,24 @@ This board supports the use of a PCB to SMA adapter if needed.
 <a name="launch"></a>
 
 ## Launches
-We launched the Argo 2 capsule on April 2016 using the Feather M0 setup without the thermocouple (due to SPI issues - fixed in Teensy version). We received data throughout most of flight, which reached over 30 km altitude, and used HabHub to follow the capsule.
+### **April 23, 2016**: (Argo-2) 
+We launched the Argo 2 capsule on April 23, 2016 using the Feather M0 setup without the thermocouple (due to SPI issues). We received data throughout most of flight, which reached `33 km` altitude, and used HabHub to follow the capsule.
 Unfortunately, the capsule landed in a mountainous area that made recovery impossible.
 
-A second launch is planned for late November 2016.
+The data revealed an average vertical speed of `2.3 m/s` (very low) and an estimated flight time of 295 minutes.
 
----
+### **November 28, 2016**: (CP-1)
 
-Hardware and software designed by Tomas Manterola.
+<img src="img/G0022041.jpg" width="400">
+<img src="img/G0036804.jpg" width="400">
+
+We launched the CP-1 capsule on November 28, 2016, and succesfully recovered it! GoPro camera took many photos throughout the mission.
+
+The capsule rose to around `33 km` at an average vertical speed of `4.5 m/s`. The mission lasted 149 minutes.
+
+### **June 4, 2017**: (CP-2)
+Another successfull recovery with the same setup!
+
+The capsule rose to around `27 km` at an average vertical speed of `5.5 m/s`. The mission lasted 136 minutes.
+
+In the future, the NSP team will be using the [Pi in the Sky](http://www.pi-in-the-sky.com/) board due to its widespread support and easy configurability. I wish them the best of luck in future launches!
